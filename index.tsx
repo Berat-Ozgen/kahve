@@ -18,7 +18,13 @@ const loader = document.getElementById('loader') as HTMLDivElement;
 const resultContainer = document.getElementById('result-container') as HTMLDivElement;
 const resultText = document.getElementById('result-text') as HTMLDivElement;
 const resetButton = document.getElementById('reset-button') as HTMLButtonElement;
+const moodSelectionContainer = document.getElementById('mood-selection') as HTMLDivElement;
+const moodButtons = document.querySelectorAll('.mood-button') as NodeListOf<HTMLButtonElement>;
+const shareButton = document.getElementById('share-button') as HTMLButtonElement;
+const userInfoContainer = document.getElementById('user-info-container') as HTMLDivElement;
+const userInfoInput = document.getElementById('user-info-input') as HTMLTextAreaElement;
 
+let selectedMood = 'Genel'; // Default mood
 
 /**
  * Converts a File object to a base64 string.
@@ -33,10 +39,12 @@ function fileToBase64(file: File): Promise<string> {
 }
 
 /**
- * Generates a fortune based on the uploaded coffee cup image.
+ * Generates a fortune based on the uploaded coffee cup image and selected mood.
  */
 async function generateFortune(imageDataUrl: string) {
   uploadContainer.classList.add('hidden');
+  moodSelectionContainer.classList.add('hidden');
+  userInfoContainer.classList.add('hidden');
   imagePreviewContainer.classList.add('hidden');
   resultContainer.classList.add('hidden');
   loader.classList.remove('hidden');
@@ -54,9 +62,19 @@ async function generateFortune(imageDataUrl: string) {
         data,
       },
     };
+    
+    const userInfo = userInfoInput.value.trim();
+    let promptText = `Bu kahve falını özellikle "${selectedMood}" konusu odaklı yorumla. Fincandaki şekilleri analiz et ve gelecekle ilgili olumlu ve yapıcı kehanetlerde bulun.`;
+    
+    if (userInfo) {
+      promptText += ` Yorumunu yaparken şu kişisel bilgileri de dikkate al: "${userInfo}". Bu bilgilere dayanarak falı daha kişisel ve anlamlı hale getir.`;
+    }
+
+    promptText += " Cevabını markdown formatında, başlıklar ve paragraflar kullanarak organize et.";
+
 
     const textPart = {
-      text: "Bu kahve falını yorumla. Fincandaki şekilleri analiz et ve gelecekle ilgili olumlu ve yapıcı kehanetlerde bulun. Cevabını markdown formatında, başlıklar ve paragraflar kullanarak organize et."
+      text: promptText
     };
 
     const response = await ai.models.generateContent({
@@ -81,6 +99,41 @@ async function generateFortune(imageDataUrl: string) {
 }
 
 /**
+ * Shares the fortune text using Web Share API or copies to clipboard.
+ */
+async function shareFortune() {
+    const fortuneText = resultText.innerText;
+    const buttonOriginalHTML = shareButton.innerHTML;
+    
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Sanal Kahve Falım',
+                text: `İşte Sanal Kahve Falı'ndan gelen yorumum:\n\n${fortuneText}`,
+            });
+            shareButton.innerHTML = `<i class="fa-solid fa-check"></i> Paylaşıldı!`;
+        } catch (error) {
+            console.error('Paylaşım sırasında hata:', error);
+            shareButton.innerHTML = `<i class="fa-solid fa-xmark"></i> Hata Oluştu`;
+        }
+    } else {
+        try {
+            await navigator.clipboard.writeText(fortuneText);
+            shareButton.innerHTML = `<i class="fa-solid fa-copy"></i> Panoya Kopyalandı!`;
+        } catch (error) {
+            console.error('Kopyalama sırasında hata:', error);
+            shareButton.innerHTML = `<i class="fa-solid fa-xmark"></i> Kopyalanamadı`;
+        }
+    }
+
+    // Reset button text after a delay
+    setTimeout(() => {
+        shareButton.innerHTML = buttonOriginalHTML;
+    }, 2000);
+}
+
+
+/**
  * Handles the image upload event.
  */
 async function handleImageUpload(event: Event) {
@@ -92,9 +145,25 @@ async function handleImageUpload(event: Event) {
     imagePreview.src = imageDataUrl;
     imagePreviewContainer.classList.remove('hidden');
     uploadContainer.classList.add('hidden');
+    moodSelectionContainer.classList.add('hidden');
+    userInfoContainer.classList.add('hidden');
     
     await generateFortune(imageDataUrl);
   }
+}
+
+/**
+ * Handles mood selection.
+ */
+function handleMoodSelection(event: Event) {
+  const target = event.currentTarget as HTMLButtonElement;
+  
+  // Update state
+  selectedMood = target.dataset.mood || 'Genel';
+
+  // Update UI
+  moodButtons.forEach(button => button.classList.remove('active'));
+  target.classList.add('active');
 }
 
 /**
@@ -102,7 +171,10 @@ async function handleImageUpload(event: Event) {
  */
 function resetApp() {
     imageUploadInput.value = ''; // Reset file input
+    userInfoInput.value = ''; // Reset textarea
     uploadContainer.classList.remove('hidden');
+    moodSelectionContainer.classList.remove('hidden');
+    userInfoContainer.classList.remove('hidden');
     imagePreviewContainer.classList.add('hidden');
     resultContainer.classList.add('hidden');
     loader.classList.add('hidden');
@@ -111,3 +183,7 @@ function resetApp() {
 // Event Listeners
 imageUploadInput.addEventListener('change', handleImageUpload);
 resetButton.addEventListener('click', resetApp);
+shareButton.addEventListener('click', shareFortune);
+moodButtons.forEach(button => {
+  button.addEventListener('click', handleMoodSelection);
+});

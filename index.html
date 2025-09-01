@@ -24,6 +24,29 @@
         <p class="subtitle">Fincanının fotoğrafını yükle, Gemini geleceğini yorumlasın.</p>
       </header>
 
+      <div id="mood-selection" class="mood-container">
+        <p class="mood-title">Neye niyet ettin?</p>
+        <div class="mood-buttons">
+          <button class="mood-button active" data-mood="Genel">
+            <i class="fa-solid fa-star"></i> Genel
+          </button>
+          <button class="mood-button" data-mood="Aşk">
+            <i class="fa-solid fa-heart"></i> Aşk
+          </button>
+          <button class="mood-button" data-mood="Kariyer">
+            <i class="fa-solid fa-briefcase"></i> Kariyer
+          </button>
+          <button class="mood-button" data-mood="Sağlık">
+            <i class="fa-solid fa-staff-aesculapius"></i> Sağlık
+          </button>
+        </div>
+      </div>
+
+      <div id="user-info-container" class="user-info-container">
+        <p class="user-info-title">Biraz kendinden bahset (isteğe bağlı)</p>
+        <textarea id="user-info-input" placeholder="Örn: 25 yaşında, bekar, yeni bir iş arıyorum..." rows="3"></textarea>
+      </div>
+
       <div id="upload-container">
         <label for="image-upload" class="upload-label" aria-label="Kahve fincanı fotoğrafı yükle">
           <div class="upload-box">
@@ -46,10 +69,16 @@
       <div id="result-container" class="hidden">
         <h2>İşte Falın!</h2>
         <div id="result-text"></div>
-        <button id="reset-button">
+        <div class="button-group">
+           <button id="share-button">
+                <i class="fa-solid fa-share-nodes"></i>
+                Falını Paylaş
+            </button>
+          <button id="reset-button">
             <i class="fa-solid fa-arrow-rotate-left"></i>
             Yeni Fal Bak
-        </button>
+          </button>
+        </div>
       </div>
     </main>
 
