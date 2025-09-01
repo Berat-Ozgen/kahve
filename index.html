@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanal Kahve Falı</title>
+    <link rel="stylesheet" href="index.css" />
+    <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.run/@google/genai",
+    "safevalues/dom": "https://cdn.jsdelivr.net/npm/safevalues@1.2.0/dist/mjs/dom/index.js",
+    "safevalues": "https://cdn.jsdelivr.net/npm/safevalues@1.2.0/dist/mjs/index.js",
+    "markdown-it": "https://esm.sh/markdown-it@^14.1.0",
+    "safevalues/": "https://aistudiocdn.com/safevalues@^1.2.0/"
+  }
+}
+</script>
+  </head>
+  <body>
+    <main class="container">
+      <header class="app-header">
+        <h1>🔮 Sanal Kahve Falı</h1>
+        <p class="subtitle">Fincanının fotoğrafını yükle, Gemini geleceğini yorumlasın.</p>
+      </header>
+
+      <div id="upload-container">
+        <label for="image-upload" class="upload-label" aria-label="Kahve fincanı fotoğrafı yükle">
+          <div class="upload-box">
+            <i class="fa-solid fa-camera-retro"></i>
+            <span>Fincanının Fotoğrafını Seç</span>
+          </div>
+        </label>
+        <input type="file" id="image-upload" accept="image/*" />
+      </div>
+
+      <div id="image-preview-container" class="hidden">
+        <img id="image-preview" alt="Yüklenen kahve fincanı fotoğrafı" />
+      </div>
+
+      <div id="loader" class="hidden">
+        <div class="spinner"></div>
+        <p>Semboller yorumlanıyor, gelecek yükleniyor...</p>
+      </div>
+
+      <div id="result-container" class="hidden">
+        <h2>İşte Falın!</h2>
+        <div id="result-text"></div>
+        <button id="reset-button">
+            <i class="fa-solid fa-arrow-rotate-left"></i>
+            Yeni Fal Bak
+        </button>
+      </div>
+    </main>
+
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Sanal Kahve Falı",
+  "description": "Kahve fincanınızın fotoğrafını yükleyin ve Gemini'nin sizin için geleceği yorumlamasına izin verin.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
